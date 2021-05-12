@@ -14,8 +14,8 @@ There are two possible ways to submit your project. Your instructor should have 
 
 ### Option B - Pull Request
 
-- [ ] Fork and clone the repository.
-- [ ] Implement your project in a `firstname-lastname` branch.
+- [x] Fork and clone the repository.
+- [x] Implement your project in a `firstname-lastname` branch.
 - [ ] Create a pull request of `firstname-lastname` against your `main` branch.
 - [ ] Open the assignment in Canvas and submit your pull request.
 
@@ -39,9 +39,9 @@ Open `api/schemes/scheme-router.js` and study the specification for each endpoin
 
 Write middleware functions in `api/schemes/scheme-middleware.js` following the instructions inside that file:
 
-- [ ] `checkSchemeId`
-- [ ] `validateScheme`
-- [ ] `validateStep`
+- [x] `checkSchemeId`
+- [x] `validateScheme`
+- [x] `validateStep`
 
 ### Database Functions
 
