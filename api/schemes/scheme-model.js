@@ -18,110 +18,44 @@ const findById = async (scheme_id) => {
     .orderBy('st.step_number');
   
   const organizedSchemes = rawSchemeData.reduce((acc, scheme) => {
-    const { instructions, scheme_id, scheme_name, step_id, step_number } = scheme;
+    const { instructions, scheme_name, step_id, step_number } = scheme;
     if (acc[scheme_name]) {
       acc[scheme_name].steps.push({ step_id, step_number, instructions });
     } else {
-      acc[scheme_name] = {
-        scheme_id: scheme_id,
-        scheme_name: scheme_name,
-        steps: [{ step_id, step_number, instructions }]
+      if (!step_id) {
+        acc[scheme_name] = {
+          scheme_id: scheme_id,
+          scheme_name: scheme_name,
+          steps: []
+        }
+      } else {
+          acc[scheme_name] = {
+            scheme_id: scheme_id,
+            scheme_name: scheme_name,
+            steps: [{ step_id, step_number, instructions }]
+          }
       }
     }
     return acc;
-  }, {})
+  }, {});
     
   return organizedSchemes;
-  
-  // EXERCISE B
-  /*
-    1B- Study the SQL query below running it in SQLite Studio against `data/schemes.db3`:
-
-      SELECT
-          sc.scheme_name,
-          st.*
-      FROM schemes as sc
-      LEFT JOIN steps as st
-          ON sc.scheme_id = st.scheme_id
-      WHERE sc.scheme_id = 1
-      ORDER BY st.step_number ASC;
-
-    2B- When you have a grasp on the query go ahead and build it in Knex
-    making it parametric: instead of a literal `1` you should use `scheme_id`.
-
-    3B- Test in schememan and see that the resulting data does not look like a scheme,
-    but more like an array of steps each including scheme information:
-
-      [
-        {
-          "scheme_id": 1,
-          "scheme_name": "World Domination",
-          "step_id": 2,
-          "step_number": 1,
-          "instructions": "solve prime number theory"
-        },
-        {
-          "scheme_id": 1,
-          "scheme_name": "World Domination",
-          "step_id": 1,
-          "step_number": 2,
-          "instructions": "crack cyber security"
-        },
-        // etc
-      ]
-
-    4B- Using the array obtained and vanilla JavaScript, create an object with
-    the structure below, for the case _when steps exist_ for a given `scheme_id`:
-
-      {
-        "scheme_id": 1,
-        "scheme_name": "World Domination",
-        "steps": [
-          {
-            "step_id": 2,
-            "step_number": 1,
-            "instructions": "solve prime number theory"
-          },
-          {
-            "step_id": 1,
-            "step_number": 2,
-            "instructions": "crack cyber security"
-          },
-          // etc
-        ]
-      }
-
-    5B- This is what the result should look like _if there are no steps_ for a `scheme_id`:
-
-      {
-        "scheme_id": 7,
-        "scheme_name": "Have Fun!",
-        "steps": []
-      }
-  */
 }
 
-function findSteps(scheme_id) { // EXERCISE C
-  /*
-    1C- Build a query in Knex that returns the following data.
-    The steps should be sorted by step_number, and the array
-    should be empty if there are no steps for the scheme:
+const findSteps = async (scheme_id) => { 
+  
+  const rawSchemeData = await db('schemes as sc')
+    .leftJoin('steps as st', 'sc.scheme_id', '=', 'st.scheme_id')
+    .select('st.step_id', 'st.step_number', 'st.instructions','sc.scheme_name')
+    .where('sc.scheme_id', '=', `${scheme_id}`)
+    .orderBy('st.step_number');
 
-      [
-        {
-          "step_id": 5,
-          "step_number": 1,
-          "instructions": "collect all the sheep in Scotland",
-          "scheme_name": "Get Rich Quick"
-        },
-        {
-          "step_id": 4,
-          "step_number": 2,
-          "instructions": "profit",
-          "scheme_name": "Get Rich Quick"
-        }
-      ]
-  */
+  if (!rawSchemeData[0].step_id) {
+    return [];
+  } else {
+    return rawSchemeData;
+  }
+
 }
 
 function add(scheme) { // EXERCISE D
